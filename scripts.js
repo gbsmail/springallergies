@@ -11,69 +11,59 @@ let svg = d3.select("#dataviz")
         .append("g")
             .attr("transform", `translate(${margin.left}, ${margin.top})`);
 
-//Read the data
-d3.csv({"", function(data)});
+    const growthData = [
+                {
+                    "Year": "1950",
+                    "Value": -5
+                },
+                {
+                    "Year": "1960",
+                    "Value": 0
+                },
+                {
+                    "Year": "1970",
+                    "Value": 5
+                },
+                {
+                    "Year": "1980",
+                    "Value": 10
+                },
+                {
+                    "Year": "2000",
+                    "Value": 20
+                },
+                {
+                    "Year": "2010",
+                    "Value": 30
+                },
+                {
+                    "Year": "2020",
+                    "Value": 40
+                },
+            ];
 
-  // group the data: I want to draw one line per group
-  var sumstat = d3.nest() // nest function allows to group the calculation per level of a factor
-    .key(function(d) { return d.name;})
-    .entries(data);
+// make x Axis with dates
+const x = d3.scaleTime()
+.domain([0, 2020]) // input data, aka the values above
+.range([0, width]);
+svg.append("g")
+      .attr("transform", "translate(0," + height + ")")
+      .call(d3.axisBottom(x));
 
-// to make a scaleLinear bar chart for gun 
-const xScale = d3.scaleLinear()
-.domain([0, 15000]) // input data, aka the values above
-.range([0, width])
-
-// scaleBand
-const yScale = d3.scaleBand()
-.domain(gunData.map(d => d.Country))
-.range([height, 0])
+// make y Axis 
+const y = d3.scaleLinear()
+.domain([0, 100])
+.range([height, 0]);
+svg.append("g")
+.call(d3.axisLeft(y));
 
 //you can color it
 const colorScale = d3.scaleLinear()
 .domain([2000, 15000])
-.range(["pink", "darkred"])
+.range(["pink", "darkred"]);
 
-// use d3 to draw axes based on the scales
-// svg.append("g").call(d3.axisBottom(xScale))
-
-svg.selectAll("rect")
-.data(gunData)
-.join("rect") 
-.attr("x", xScale(0)) // start at zero for a bar chart
-.attr("y", (d) => { return yScale(d.Country)}) 
-.attr("width", (d) => {return xScale(d.Value)} )
-.attr("height", yScale.bandwidth() - 2) // how big each individual space is
-
-// make an axis and labeling now 
-svg.append("g").call(d3.axisLeft(yScale)) // "g" lets you append a whole group
-svg.append("g").call(d3.axisBottom(xScale))
-.attr("transform", `translate(0,${height})`) // this puts the axis on the bottom
-
-
-// make a circle/ dot chart 
-//const someData = [100000, 250000, 600000, 800000, 950000] for circle chart
-
-// scaleLinear - tell our scale what our min and max is
-//const xScale = d3.scaleLinear()
-//.domain([0, 1000000]) // input data
-//.range([0, width]) // visual display
-
-//can check if things are working in the CONSOLE with this
-//console.log(xScale(1000000))
-
-//const circleSizeScale = d3.scaleLinear() 
-//.domain([0, 1000000])
-//.range([1, 25])
-
-// timeScale - in order for times and dates to work, JS has a specif idea of how it 
-//needs to be formatted
-//const timeScale = d3.scaleTime()
-//.domain([new Date(2022, 0, 1), new Date[2023, 0, 1]]) //year date month
-//.range([0, width])
-
-//svg.selectAll("cirle")
-//.data(someData)
-//.join("circle") 
-//.attr("r", (datapoint) => { return circleSizeScale(datapoint)}) // the radius - the datapoint returns the circle size (datapoint)
-//.attr("cx", (d) => { return xScale(d)}) // the coordinate x of the circle
+svg.append("g")
+.selectAll("dot")
+.data(growthData)
+.enter()
+.append("circle")
