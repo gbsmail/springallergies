@@ -11,59 +11,30 @@ let svg = d3.select("#dataviz")
         .append("g")
             .attr("transform", `translate(${margin.left}, ${margin.top})`);
 
-    const growthData = [
-                {
-                    "Year": "1950",
-                    "Value": -5
-                },
-                {
-                    "Year": "1960",
-                    "Value": 0
-                },
-                {
-                    "Year": "1970",
-                    "Value": 5
-                },
-                {
-                    "Year": "1980",
-                    "Value": 10
-                },
-                {
-                    "Year": "2000",
-                    "Value": 20
-                },
-                {
-                    "Year": "2010",
-                    "Value": 30
-                },
-                {
-                    "Year": "2020",
-                    "Value": 40
-                },
-            ];
+            //bring in the data
+    d3.csv("")
+
+     // When reading the csv, I must format variables:
+     function(d){
+        return { date : d3.timeParse("%Y-%m-%d")(d.date), value : d.value }
+      }).then(
+    
+      // Now I can use this dataset:
+      function(data) {
+    
 
 // make x Axis with dates
 const x = d3.scaleTime()
-.domain([0, 2020]) // input data, aka the values above
-.range([0, width]);
+.domain(d3.extent(data, function(d) { return d.date; }))
+          .range([ 0, width ]);
 svg.append("g")
       .attr("transform", "translate(0," + height + ")")
       .call(d3.axisBottom(x));
 
 // make y Axis 
 const y = d3.scaleLinear()
-.domain([0, 100])
+.domain([0, d3.max(data, function(d) { return +d.value; })])
 .range([height, 0]);
 svg.append("g")
 .call(d3.axisLeft(y));
 
-//you can color it
-const colorScale = d3.scaleLinear()
-.domain([2000, 15000])
-.range(["pink", "darkred"]);
-
-svg.append("g")
-.selectAll("dot")
-.data(growthData)
-.enter()
-.append("circle")
