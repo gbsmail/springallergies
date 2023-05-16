@@ -14,15 +14,6 @@ let svg = d3.select("#dataviz")
             //bring in the data
     d3.csv("")
 
-     // When reading the csv, I must format variables:
-     function(d){
-        return { date : d3.timeParse("%Y-%m-%d")(d.date), value : d.value }
-      }).then(
-    
-      // Now I can use this dataset:
-      function(data) {
-    
-
 // make x Axis with dates
 const x = d3.scaleTime()
 .domain(d3.extent(data, function(d) { return d.date; }))
